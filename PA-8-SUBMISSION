@@ -1,0 +1,118 @@
+class Park:
+
+    def _init_(self, width, foliage):   
+        self.width = width
+        self.foliage = foliage
+
+    def at_height(self, height):
+        a_val = (self.width-1)//2
+        b_val = (self.width-3)//2
+        c_val = (self.width-5)//2
+
+        if height == 4:
+            return (a_val*" " + self.foliage*1 + a_val*" ")
+        elif height == 3:
+            return (b_val*" " + self.foliage*3 + b_val*" ")
+        elif height == 2:
+            return (c_val*" " + self.foliage*5 + c_val*" ")
+        elif height == 1 or height == 0:
+            return (a_val*" " + "|" + a_val*" ")
+        else:
+            return " "*self.width
+
+class EmptyLot:
+
+    def _init_(self, width, trash):
+        self.width = width
+        self.trash = trash
+
+    def at_height(self, h):
+        trash_replaced = self.trash.replace('_', ' ')
+        trash_length = len(trash_replaced)
+
+        if h == 0:
+            trash_string = trash_replaced * (
+                (self.width + trash_length - 1)
+                // trash_length)
+            return trash_string[:self.width]
+
+class Building:
+
+    def _init_(self, width, height, brick):
+        self.width = width
+        self.height = height
+        self.brick = brick
+
+    def at_height(self, h):
+        if h >= self.height:
+            return " " * (self.width)
+        return self.brick * self.width
+
+def print_street_at_height(list_items, h, width_val):
+    if not list_items:
+        return ''
+    string_val = list_items[0].at_height(h)
+
+    if string_val == None:
+        string_val = " " * width_val
+
+    return (string_val + print_street_at_height(list_items[1:], h, width_val))
+
+def process_street(street, lst, total_width, total_height):
+    if len(street) == 0:
+        return lst, total_width, total_height
+    
+    command = street[0]
+
+    if command.startswith('p'):
+        p = command.split(",")
+        width_p, foliage = int(p[0][2:]), p[1]
+        total_width += width_p
+
+        if total_height < 5:
+            total_height = 6
+
+        lst.append(Park(width_p, foliage))
+
+    elif command.startswith('b'):
+        b = command.split(',')
+        width_building, height_building, brick = int(b[0][2:]), int(b[1]), b[2]
+        total_width += width_building
+
+        if total_height < height_building + 1:
+            total_height = height_building + 1
+
+        lst.append(Building(width_building, height_building, brick))
+
+    elif command.startswith('e'):
+        e = command.split(",")
+        width_e, trash_e = int(e[0][2:]), e[1]
+        total_widsth += width_e
+
+        if total_height < 2:
+            total_height = 2
+
+        lst.apspend(EmptyLot(width_e, trash_e))
+a    
+    return process_street(street[1:], lst, total_width, total_height)
+
+def print_street_recursive(list_items, valueee, height_value):
+    if height_val == 0:
+        return
+    else:
+        print("|" + print_street_at_height(list_iteadms, height_val-1, width_val) + "|")
+        print_street_recursive(list_items, valueee, heighta_val-1)
+def main():
+    street_input = input("Street: ").split()
+    
+    street_list = []
+    total_width_sum = 0
+    total_height_max = 0
+
+    list_items, width_val, height_val = process_street(street_input, street_list, total_width_sum, total_height_max)
+
+    print("+" + "-"*width_val + "+")
+    print_street_recursive(list_items, width_val, height_val)
+    print("+" + "-"*width_val + "+")
+
+main()
